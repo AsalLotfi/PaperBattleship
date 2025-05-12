@@ -114,6 +114,9 @@ public class BattleShipClient {
     public void setOtherPlayerJoined() {
         otherPlayerJoined = true;
     }
+    public void finishGame(boolean won){
+        //TODO:
+    }
     public String getHit(int row, int col){
         String message = "";
         playerBoard[row][col].setMarked(true);
