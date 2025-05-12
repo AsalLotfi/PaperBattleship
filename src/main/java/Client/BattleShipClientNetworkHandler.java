@@ -36,7 +36,7 @@ public class BattleShipClientNetworkHandler implements Runnable{
                 }
                 else if(false) //TODO: handle hit result from opponent
                 {
-                    client.setEnemyResult(false);
+                    client.setEnemyResult(false, "NONE");
                 }
             }
         }
