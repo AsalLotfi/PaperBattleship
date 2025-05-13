@@ -25,8 +25,8 @@ public class Server {
             while(true) {
 
                 // TODO: Accept a client connection
-                // TODO: Create a ClientHandler for the connected client
-                //TODO: uncomment this code
+                // TODO: Create a ClientHandler named clientThread for the connected client
+                // TODO: uncomment this code
                 //if(i == 0) {
                 //    playerOne = clientThread;
                 //}
@@ -37,6 +37,9 @@ public class Server {
                 //}
                 //i++;
                 //TODO add clientThread to clients and executor service
+
+                //TODO(for later): handle the situation where more than two players join at the same time
+                //TODO(for later): handle the situation where more than one game happens
             }
         } finally {
             if (listener != null) {
