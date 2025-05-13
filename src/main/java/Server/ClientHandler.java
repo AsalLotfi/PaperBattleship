@@ -13,8 +13,8 @@ public class ClientHandler implements Runnable {
     private String username;
     ClientHandler enemy;
 
-    public void print(String requst) {
-        //TODO: write to output
+    public void sendData(String request) {
+        //TODO: write to output and flush
     }
 
     public void setEnemy(ClientHandler enemy) throws IOException {
@@ -50,9 +50,10 @@ public class ClientHandler implements Runnable {
                     int col = 0;//TODO: extract row and col
                     //TODO: inform enemy of the attack
                 }
-                else if (false) { //TODO: Handle Hit Result
-                    //TODO: inform the enemy of the hit result
+                else if (false) { //TODO: Handle Attack Result
+                    // TODO: Notify the attacker about the result of their attack (hit or miss)
                 }
+                //TODO(for later): handle winning and losing
             }
         } finally
         {
