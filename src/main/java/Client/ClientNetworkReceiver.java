@@ -3,13 +3,12 @@ package Client;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Objects;
 
-public class BattleShipClientNetworkHandler implements Runnable{
-    private BattleShipClient client;
+public class ClientNetworkReceiver implements Runnable{
+    private Client client;
     private DataInputStream in;
 
-    public BattleShipClientNetworkHandler(Socket clientSocket, BattleShipClient client) throws IOException {
+    public ClientNetworkReceiver(Socket clientSocket, Client client) throws IOException {
         // initialize client
         // initialize in
     }

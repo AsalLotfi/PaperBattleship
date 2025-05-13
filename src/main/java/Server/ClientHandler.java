@@ -37,7 +37,6 @@ public class ClientHandler implements Runnable {
             while(true) {
                 // TODO: Read a UTF-encoded string from the client
                 String request = "";
-
                 if (false) { //TODO: Set Username
                     int playerNumber = isFirst?0:1;
                     // TODO: Send player number to client
@@ -47,10 +46,8 @@ public class ClientHandler implements Runnable {
                     //TODO: tell the clients that the other player joined
                 }
                 else if (false) { //TODO: Handle Attack
-
                     int row = 0;//TODO: extract row and col
                     int col = 0;//TODO: extract row and col
-
                     //TODO: inform enemy of the attack
                 }
                 else if (false) { //TODO: Handle Hit Result

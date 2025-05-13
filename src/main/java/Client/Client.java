@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.*;
 import Client.utils.AnsiColor;
 
-public class BattleShipClient {
+public class Client {
     private static final String SPACING = "     ";
     private static final String IP_ADDRESS = "127.0.0.1";
     private static final int PORT_NUMBER = 3737;
@@ -27,7 +27,7 @@ public class BattleShipClient {
     volatile boolean otherPlayerJoined = false;
     DataOutputStream out;
 
-    public BattleShipClient(Socket clientSocket) {
+    public Client(Socket clientSocket) {
         this.clientSocket = clientSocket;
 
         try {
@@ -139,7 +139,7 @@ public class BattleShipClient {
     private static void playSound(String soundFileName) {
         try {
             // Load the sound file from the resources folder
-            URL soundFileURL = BattleShipClient.class.getClassLoader().getResource( soundFileName);
+            URL soundFileURL = Client.class.getClassLoader().getResource( soundFileName);
 
             if (soundFileURL == null) {
                 System.out.println("Sound file not found: " + soundFileName);
