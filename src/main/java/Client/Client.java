@@ -33,7 +33,7 @@ public class Client {
         try {
             //TODO: initialize out
             this.out = new DataOutputStream(clientSocket.getOutputStream());
-            //TODO: create a BattleShipClientNetworkHandler
+            //TODO: create a ClientNetworkReceiver
             //TODO: start it in another thread
 
             System.out.println("Enter Username: ");
@@ -290,7 +290,7 @@ public class Client {
 
         try {
             //initialize clientSocket
-            //initialize BattleShipClient
+            //initialize Client
         } finally {
             try {
                 if (clientSocket != null) {

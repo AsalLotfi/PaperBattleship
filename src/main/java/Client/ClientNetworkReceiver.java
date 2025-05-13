@@ -31,7 +31,7 @@ public class ClientNetworkReceiver implements Runnable{
                     int row = 0; //TODO: extract row
                     int col = 0; //TODO: extract col
                     String message = client.getHit(row, col);
-
+                    //TODO: inform server
                 }
                 else if(false) //TODO: handle hit result from opponent
                 {
