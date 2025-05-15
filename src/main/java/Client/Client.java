@@ -31,10 +31,8 @@ public class Client {
         this.clientSocket = clientSocket;
 
         try {
-            //TODO: initialize out
             this.out = new DataOutputStream(clientSocket.getOutputStream());
-            //TODO: create a ClientNetworkReceiver
-            //TODO: start it in another thread
+            new Thread(new ClientNetworkReceiver(new DataInputStream(clientSocket.getInputStream()), this)).start();
 
             System.out.println("Enter Username: ");
             Scanner usernameScanner = new Scanner(System.in);
@@ -95,12 +93,24 @@ public class Client {
 
     //Actions
     private void attack() {
-        //TODO: send attack message to server
+        String message = "attack|" + lastEnemyRow + "," + lastEnemyCol;
+        try {
+            out.writeUTF(message);
+        } catch (IOException e) {
+            System.out.println("Could not send message to the server!\n\n");
+        }
+
         isTurn = false;
     }
     private void sendUsername(String username) throws IOException {
-        //TODO: send username to server
+        String message = "set-username|" + username;
+        try {
+            out.writeUTF(message);
+        } catch (IOException e) {
+            System.out.println("Could not send message to the server!\n\n");
+        }
     }
+
     public void setEnemyResult(boolean hit, String shipName) {
         enemyBoard[lastEnemyRow][lastEnemyCol].setEnemyShip(hit);
         enemyBoard[lastEnemyRow][lastEnemyCol].setMarked(true);
@@ -115,7 +125,6 @@ public class Client {
         otherPlayerJoined = true;
     }
     public void finishGame(boolean won){
-        //TODO:
     }
     public String getHit(int row, int col){
         String message = "";
@@ -289,8 +298,8 @@ public class Client {
         //TODO: get IP_Address
 
         try {
-            //initialize clientSocket
-            //initialize Client
+            clientSocket = new Socket("localhost", PORT_NUMBER);
+            Client client = new Client(clientSocket);
         } finally {
             try {
                 if (clientSocket != null) {
