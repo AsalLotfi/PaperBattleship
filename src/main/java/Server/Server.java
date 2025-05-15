@@ -22,16 +22,16 @@ public class Server {
         ServerSocket listener = null;
 
         try {
-            ServerSocket serverSocket = new ServerSocket();
+            ServerSocket serverSocket = new ServerSocket(PORT);
             int i = 0;
             while(true) {
                 Socket socket = serverSocket.accept();
-                ClientHandler clientThread = new ClientHandler(socket, i == 0);
+                ClientHandler clientThread = new ClientHandler(socket, i % 2 == 0);
 
-                if(i == 0) {
+                if(i % 2 == 0) {
                     playerOne = clientThread;
                 }
-                if(i == 1) {
+                else {
                     playerTwo = clientThread;
                     playerOne.setEnemy(playerTwo);
                     playerTwo.setEnemy(playerOne);

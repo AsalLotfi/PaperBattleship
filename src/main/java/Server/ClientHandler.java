@@ -10,6 +10,7 @@ public class ClientHandler implements Runnable {
     private DataInputStream in;
     private DataOutputStream out;
     private boolean isFirst;
+    private boolean usernameSet;
     private String username;
     ClientHandler enemy;
 
@@ -33,6 +34,7 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Socket client, boolean isFirst) throws IOException {
         this.client = client;
         this.isFirst = isFirst;
+        this.usernameSet = false;
         in = new DataInputStream(client.getInputStream());
         out = new DataOutputStream(client.getOutputStream());
     }
@@ -47,9 +49,15 @@ public class ClientHandler implements Runnable {
                     username = request.replace("set-username|", "");
                     out.writeUTF("set-player-number|" + playerNumber);
                     out.flush();
+                    this.usernameSet = true;
+
                     while (enemy == null) {
-                        Thread.sleep(10);
+                        Thread.onSpinWait();
                     }
+                    while (!enemy.isUsernameSet()) {
+                        Thread.onSpinWait();
+                    }
+
                     out.writeUTF("enemy-joined");
                     out.flush();
                 }
@@ -58,7 +66,7 @@ public class ClientHandler implements Runnable {
                     int col = 0;
 
                     //attack|row,col
-                    request.replace("attack|", "");
+                    request = request.replace("attack|", "");
                     row = Integer.parseInt(request.split(",")[0]);
                     col = Integer.parseInt(request.split(",")[1]);
 
@@ -66,15 +74,21 @@ public class ClientHandler implements Runnable {
                 }
                 else if (request.startsWith("attack-result")) {
 
-                    request.replace("attack-result|", "");
+                    request = request.replace("attack-result|", "");
                     enemy.out.writeUTF("enemy-result|" + request);
                     enemy.out.flush();
                 }
-                //TODO(for later): handle winning and losing
+                else if (request.equals("enemy-won")) {
+                    enemy.out.writeUTF("win");
+                    enemy.out.flush();
+                }
+                else if (request.equals("gameover")) {
+                    out.writeUTF("gameover"); //to terminate ClientNetworkReceiver
+                    out.flush();
+                    return;
+                }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally
         {
@@ -86,5 +100,9 @@ public class ClientHandler implements Runnable {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public boolean isUsernameSet() {
+        return usernameSet;
     }
 }

@@ -37,16 +37,10 @@ public class ClientNetworkReceiver implements Runnable{
                     int row = 0;
                     int col = 0;
                     //incoming-attack|row,col
-                    response.replace("incoming-attack|", "");
+                    response = response.replace("incoming-attack|", "");
                     row = Integer.parseInt(response.split(",")[0]);
                     col = Integer.parseInt(response.split(",")[1]);
-                    String message = client.getHit(row, col);
-                    try {
-                        client.out.writeUTF("attack-result|" + message);
-                        client.out.flush();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    client.getHit(row, col);
                 }
                 else if(response.startsWith("enemy-result|"))
                 {
@@ -55,6 +49,14 @@ public class ClientNetworkReceiver implements Runnable{
                     //enemy-result|HIT,NONE
                     //enemy-result|MISS,NINE
                     client.setEnemyResult(Objects.equals(response.split(",")[0], "HIT"), response.split(",")[1]);
+                }
+                else if(response.equals("win"))
+                {
+                    client.win();
+                }
+                else if (response.equals("gameover"))
+                {
+                    return;
                 }
             }
         }

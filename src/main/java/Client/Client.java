@@ -27,6 +27,9 @@ public class Client {
     volatile boolean otherPlayerJoined = false;
     DataOutputStream out;
 
+    boolean won = false;
+    boolean lost = false;
+
     public Client(Socket clientSocket) {
         this.clientSocket = clientSocket;
 
@@ -48,11 +51,14 @@ public class Client {
             }
 
             printBoards();
-            while(true)
+            mainLoop : while(!won && !lost)
             {
                 while(!isTurn)
                 {
                     Thread.onSpinWait();
+                    if (won || lost) {
+                        break mainLoop;
+                    }
                 }
 
                 System.out.println("Your Turn Now!");
@@ -96,7 +102,7 @@ public class Client {
         String message = "attack|" + lastEnemyRow + "," + lastEnemyCol;
         try {
             out.writeUTF(message);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Could not send message to the server!\n\n");
         }
 
@@ -126,7 +132,7 @@ public class Client {
     }
     public void finishGame(boolean won){
     }
-    public String getHit(int row, int col){
+    public void getHit(int row, int col){
         String message = "";
         playerBoard[row][col].setMarked(true);
         String sankBattleShipName = "NONE";
@@ -142,8 +148,35 @@ public class Client {
         } catch (InterruptedException e) {
 
         }
-        isTurn = true;
-        return message;
+
+        try {
+            out.writeUTF("attack-result|" + message);
+            out.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // checking game status
+        boolean lost = true;
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (playerBoard[i][j].isShip() && !playerBoard[i][j].isMarked()) {
+                    lost = false;
+                }
+            }
+        }
+
+        if (lost) {
+            try {
+                out.writeUTF("enemy-won");
+                out.flush();
+                lose();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            isTurn = true;
+        }
     }
     private static void playSound(String soundFileName) {
         try {
@@ -293,13 +326,48 @@ public class Client {
         return false;
     }
 
+    public void win() {
+        try {
+            out.writeUTF("gameover"); //to terminate ClientHandler and ClientNetworkReceiver
+            out.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (int i = 0; i < 20; i++) {
+            System.out.println();
+        }
+        System.out.println(AnsiColor.CYAN + "Congratulations! You won the game! wait for the next round..." + AnsiColor.RESET + "\n\n");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        won = true;
+    }
+    public void lose() {
+        for (int i = 0; i < 20; i++) {
+            System.out.println();
+        }
+        System.out.println(AnsiColor.RED + "What a shame! You lost! wait fot the next round..." + AnsiColor.RESET + "\n\n");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        lost = true;
+    }
+
     public static void main(String[] args) throws IOException {
         Socket clientSocket = null;
-        //TODO: get IP_Address
 
         try {
-            clientSocket = new Socket("localhost", PORT_NUMBER);
-            Client client = new Client(clientSocket);
+            while (true) {
+                clientSocket = new Socket("localhost", PORT_NUMBER);
+                new Client(clientSocket);
+            }
         } finally {
             try {
                 if (clientSocket != null) {
